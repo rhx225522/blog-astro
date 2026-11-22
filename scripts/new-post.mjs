@@ -64,13 +64,7 @@ const frontmatter = [
 
 const body = `在这里开始写正文。
 
-<!--
-图片直接放进这个目录，然后在正文里用相对路径引用：
-
-![图片说明](./example.jpg)
-
-单张图片请控制在 1MB 以内。
--->
+<!-- 图片直接粘贴即自动上传，无需处理路径。 -->
 `;
 
 await mkdir(dir, { recursive: true });
