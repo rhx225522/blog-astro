@@ -11,6 +11,8 @@ export const HERO_TAGLINE = '证明我在地球上生存过的痕迹，no 无趣
 export const PROFILE_BIO = '给自己的小小世界架一台摄影机。';
 // GitHub 用户名
 export const AUTHOR_GITHUB = 'rhx225522';
+// GitHub 头像直链
+export const AUTHOR_AVATAR = 'https://avatars.githubusercontent.com/u/329394868?v=4';
 
 export const NAV = [
   { label: '文章', href: '/' },

@@ -4,6 +4,7 @@ import {
   AUTHOR_TAGLINE,
   PROFILE_BIO,
   AUTHOR_GITHUB,
+  AUTHOR_AVATAR,
 } from '../consts';
 import { collectTags, formatDate, type Post } from '../lib/posts';
 import { postUrl, tagUrl, withBase } from '../lib/url';
@@ -23,7 +24,7 @@ const shortDate = (date: Date) => formatDate(date).slice(5).replace('-', '/');
   <section class="side-card profile-card">
     <img
       class="profile-avatar"
-      src={`https://github.com/${AUTHOR_GITHUB}.png`}
+      src={AUTHOR_AVATAR}
       alt={`${AUTHOR} 的头像`}
       width="64"
       height="64"
