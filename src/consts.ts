@@ -18,7 +18,7 @@ export const AUTHOR_AVATAR = 'https://avatars.githubusercontent.com/u/329394868?
 export const GISCUS_REPO = 'rhx225522/blog-astro';
 export const GISCUS_REPO_ID = 'R_kgDOV3NWJw';
 export const GISCUS_CATEGORY = 'Announcements';
-export const GISCUS_CATEGORY_ID = '';
+export const GISCUS_CATEGORY_ID = 'DIC_kwDOV3NWJ84DLxYG';
 
 export const NAV = [
   { label: '文章', href: '/' },
