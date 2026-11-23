@@ -4,7 +4,7 @@ date: "2026-11-23"
 summary: "Skill 不是提示词，而是把流程、标准、工具、素材打包成可反复调用的工作手册——从挑选、部署到触发调用的一次完整梳理。"
 tags:
   - AI
-cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123093855545.png"
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123093855545.webp"
 draft: false
 ---
 
@@ -19,7 +19,7 @@ SKILL.md 是一个总目录，它负责告诉 AI 现在进行到哪一步了，�
 用 Skill 的作用主要有两个，一是在做自己不擅长的工作时，直接用成熟的 Skill 可能比自己做得更好、质量更高，二是在做重复性工作时，Skill 可以让任务完成得更标准，还不需要跟 AI 反复沟通、反复输入大量提示词去调教它。
 
 Skill 翻译成中文就是技能，不能简单理解成提示词或一份操作 SOP，用厨师打比方，一个做菜技能里包含一套做菜流程，比如备食材、准备调料、起锅烧油、先炒肉后炒菜、最后放调料，这是操作顺序，还包含每一步的标准，比如选哪个部位的肉、肉丝切多长多宽、调料比例多少，让做事更准确，此外还会带上自己惯用的调料和锅具，有了这些才能又快又好吃，Skill 也是一样，就是给 AI 做事的流程和标准，再加上任务用到的工具和素材，目的是让 AI 做事又快又好。
-![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123093855545.png)
+![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123093855545.webp)
 
 
 想让发挥不稳定的学徒稳定做出好菜有两种方法，一种是他每次做的时候都盯着，手把手一步步教会，这就是传统用 AI 的方式，反复对话、不断调试、一直盯着执行，另一种是直接把做菜的经验、流程和标准写成菜谱给他，让他按菜谱一步步做，这就是调用 Skill 的方式，让 AI 照着工作手册认真执行。
@@ -37,7 +37,7 @@ SKILL.md 里首先要写清楚 Skill 的工作边界，比如它可以处理口�
 第三个文件夹是 assets，里面放给 AI 的素材，相当于厨师自己带的调料，前面内容都是纯文字描述，对 AI 来说太抽象，做出来的东西很容易跑偏，直接把素材放进去，执行准确性会大大提高，比如放不同的风格模板让 AI 直接调用，结果就八九不离十。
 
 SKILL.md、references、scripts、assets 这四个就是一套 Skill 的标准目录，AI 调用时先读取 SKILL.md 的工作流程，按流程一步步执行，每做一步查阅 references 里的工作标准，同时调用 scripts 里的工具，参照 assets 里的模板，最终完成任务，这套设计的核心原则叫渐进式加载提示词，工作做到哪一步，再让 AI 去看哪一段的提示词。
-![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123093957232.png)
+![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123093957232.webp)
 
 并不是每个 Skill 都必须有复杂结构，有的很简单的 Skill 就是一份 SKILL.md 文档，这是最小单位的 Skill，同样可以顺利完成一个任务。
 

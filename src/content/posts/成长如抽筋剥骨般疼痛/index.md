@@ -3,7 +3,7 @@ title: "成长如抽筋剥骨般疼痛"
 date: "2026-11-22"
 summary: ""
 tags: []
-cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261122131612129.png"
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261122131612129.webp"
 draft: false
 ---
 
@@ -14,7 +14,7 @@ draft: false
 当你觉得痛苦，那它就是痛苦。当你觉得这件事教会了你什么，那便是成长。
 
 成长从来不是一条直线，而是一条起伏不定的心电图。那些低谷并不是你的终点，而是为了下一次攀升做准备。
-![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261122131612129.png)
+![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261122131612129.webp)
 
 
 二、分点干货 真正让人进步的东西往往让人感到痛苦，运动时的疲惫虚弱背后是身体变强壮，学习新知识时的笨拙生疏背后是头脑变聪明，每一次变好都要先经历一段脆弱的阶段，这段看似无力的时刻恰恰是真正成长的瞬间。

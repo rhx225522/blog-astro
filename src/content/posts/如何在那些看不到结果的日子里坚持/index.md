@@ -3,7 +3,7 @@ title: "如何在那些看不到结果的日子里坚持"
 date: "2026-11-23"
 summary: ""
 tags: []
-cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083000202.png"
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083000202.webp"
 draft: false
 ---
 
@@ -12,7 +12,7 @@ draft: false
 大多数目标半途而废的根本原因，不是因为你不够努力，也不是因为你不够优秀，而是因为你缺乏正反馈。
 
 任何大的成就都是由无数个微小的正反馈积累而成的。
-![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083000202.png)
+![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083000202.webp)
 
 
 二、分点干货 真正走上坡路的时候反而会觉得自己在往下走，真正变强大的时候反而会觉得自己很渺小，这种感觉像在黑夜里蒙着眼睛走路，拼命迈步却感觉不到阻力、看不到路标，甚至怀疑自己一直在原地打转，放弃的冲动会变得非常强烈，这种倒退式的成长最容易让人挫败和失望。
@@ -36,7 +36,7 @@ draft: false
 第四个方法是寻求外部反馈，个人的进步有时很难察觉，外部认可往往更容易带来正反馈，可以找志同道合的伙伴一起分享进步，获得他人的鼓励和建议，也可以把成果分享到社交平台收获点赞和评论，他人的肯定和支持是最强大的正反馈来源之一。
 
 与其纠结目标是否太大，不如先想办法让自己尽快尝到进步的甜头，从今天开始给自己一个小目标，赢得一次小胜利，收获一份正反馈。
-![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083451875.png)
+![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083451875.webp)
 
 
 三、行动清单 相关书籍可以读詹姆斯·克利尔的掌控习惯，了解习惯如何通过提示、渴求、反应、奖励四个环节形成，以及环境设计和即时奖励对长期坚持的作用。
@@ -68,4 +68,4 @@ draft: false
 练习方案可以固定一个外部反馈渠道，找同伴互评、加入同好小组或定期公开发布成果，主动询问具体的改进意见，把他人的回应转化为下一轮行动的调整方向。
 
 练习方案可以做月度复盘，对照最初设定的小目标回看哪些反馈有效、哪些奖励让人倦怠、哪些外部支持最可靠，持续调整自己的反馈系统，而不是单纯靠意志力硬扛。
-![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083500517.png)
+![image.png](https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083500517.webp)
