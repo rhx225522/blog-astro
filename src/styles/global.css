@@ -235,54 +235,6 @@ main {
   line-height: 1.7;
 }
 
-/* ---------- profile card ---------- */
-
-.profile-card {
-  display: flex;
-  gap: 18px;
-  align-items: flex-start;
-  margin-top: 56px;
-  padding: 22px;
-  background: var(--bg-elev);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-}
-
-.profile-avatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.profile-body {
-  min-width: 0;
-}
-
-.profile-name {
-  margin: 0 0 4px;
-  font-size: 17px;
-  font-weight: 700;
-}
-
-.profile-tagline {
-  margin: 0 0 6px;
-  color: var(--accent);
-  font-size: 13px;
-}
-
-.profile-bio {
-  margin: 0 0 10px;
-  color: var(--text-2);
-  font-size: 14.5px;
-}
-
-.profile-links {
-  display: flex;
-  gap: 14px;
-  font-size: 13.5px;
-}
-
 /* ---------- layout（双栏） ---------- */
 
 .layout {
