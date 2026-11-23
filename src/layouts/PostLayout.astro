@@ -82,6 +82,13 @@ const { title, date, updated, summary, tags } = post.data;
     const tocWrap = document.querySelector('.toc');
     const tocList = document.getElementById('toc-list');
 
+    if (body) {
+      body.querySelectorAll('img').forEach((img) => {
+        img.loading = 'lazy';
+        img.decoding = 'async';
+      });
+    }
+
     if (body && tocWrap && tocList) {
       const heads = Array.from(body.querySelectorAll('h2, h3'));
       if (heads.length === 0) {
