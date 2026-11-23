@@ -76,25 +76,29 @@ const { title, date, updated, summary, tags } = post.data;
 </BaseLayout>
 
 <script>
-  const body = document.querySelector('.post-body');
-  const tocWrap = document.querySelector('.toc');
-  const tocList = document.getElementById('toc-list');
+  // View Transitions 下页面会被替换，目录需要在每次导航后重建
+  document.addEventListener('astro:page-load', () => {
+    const body = document.querySelector('.post-body');
+    const tocWrap = document.querySelector('.toc');
+    const tocList = document.getElementById('toc-list');
 
-  if (body && tocWrap && tocList) {
-    const heads = Array.from(body.querySelectorAll('h2, h3'));
-    if (heads.length === 0) {
-      tocWrap.style.display = 'none';
-    } else {
-      heads.forEach((h, i) => {
-        if (!h.id) h.id = `section-${i}`;
-        const li = document.createElement('li');
-        if (h.tagName === 'H3') li.classList.add('toc-sub');
-        const a = document.createElement('a');
-        a.href = `#${h.id}`;
-        a.textContent = h.textContent ?? '';
-        li.appendChild(a);
-        tocList.appendChild(li);
-      });
+    if (body && tocWrap && tocList) {
+      const heads = Array.from(body.querySelectorAll('h2, h3'));
+      if (heads.length === 0) {
+        tocWrap.style.display = 'none';
+      } else {
+        tocList.replaceChildren();
+        heads.forEach((h, i) => {
+          if (!h.id) h.id = `section-${i}`;
+          const li = document.createElement('li');
+          if (h.tagName === 'H3') li.classList.add('toc-sub');
+          const a = document.createElement('a');
+          a.href = `#${h.id}`;
+          a.textContent = h.textContent ?? '';
+          li.appendChild(a);
+          tocList.appendChild(li);
+        });
+      }
     }
-  }
+  });
 </script>

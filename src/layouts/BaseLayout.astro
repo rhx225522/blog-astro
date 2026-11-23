@@ -1,8 +1,15 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import { SITE_TITLE, SITE_DESCRIPTION, AUTHOR, AUTHOR_EMAIL } from '../consts';
 import { withBase } from '../lib/url';
 import Nav from '../components/Nav.astro';
 import '../styles/global.css';
+// 中文正文字体：霞鹜文楷（仅加载实际用到的字符分片）
+import 'lxgw-wenkai-webfont/lxgwwenkai-regular.css';
+import 'lxgw-wenkai-webfont/lxgwwenkai-bold.css';
+// 等宽字体：JetBrains Mono
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/700.css';
 
 interface Props {
   title?: string;
@@ -35,6 +42,7 @@ const year = new Date().getFullYear();
       })();
     </script>
     <title>{pageTitle}</title>
+    <ClientRouter />
     <meta name="description" content={description} />
     <meta name="author" content={AUTHOR} />
     <meta name="generator" content={Astro.generator} />
@@ -59,7 +67,7 @@ const year = new Date().getFullYear();
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
   </head>
-  <body>
+  <body transition:animate="fade">
     <a class="skip-link" href="#main">跳到正文</a>
     <Nav />
     <main id="main">
@@ -78,15 +86,25 @@ const year = new Date().getFullYear();
       </div>
     </footer>
     <button id="back-top" class="back-top" type="button" aria-label="回到顶部">↑</button>
-    <script is:inline>
-      (() => {
+    <script>
+      // 每次导航（含首屏）后重新绑定，旧的监听器通过 AbortController 释放
+      let backTopAbort: AbortController | undefined;
+
+      document.addEventListener('astro:page-load', () => {
+        backTopAbort?.abort();
+        backTopAbort = new AbortController();
+        const signal = backTopAbort.signal;
+
         const btn = document.getElementById('back-top');
         if (!btn) return;
+
         const onScroll = () => btn.classList.toggle('show', window.scrollY > 400);
-        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('scroll', onScroll, { passive: true, signal });
         onScroll();
-        btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-      })();
+        btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }), {
+          signal,
+        });
+      });
     </script>
   </body>
 </html>
