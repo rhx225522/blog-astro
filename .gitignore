@@ -32,3 +32,5 @@ src/content/posts/写作指南.md
 # 本地分析临时文件
 .ref-*
 .chrome-tmp
+
+# 本地效果截图.mine-*
