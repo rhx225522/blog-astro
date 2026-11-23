@@ -1,0 +1,23 @@
+---
+import { AUTHOR, AUTHOR_TAGLINE, PROFILE_BIO, AUTHOR_EMAIL, AUTHOR_GITHUB } from '../consts';
+---
+
+<aside class="profile-card">
+  <img
+    class="profile-avatar"
+    src={`https://github.com/${AUTHOR_GITHUB}.png`}
+    alt={`${AUTHOR} 的头像`}
+    width="64"
+    height="64"
+    loading="lazy"
+  />
+  <div class="profile-body">
+    <p class="profile-name">{AUTHOR}</p>
+    <p class="profile-tagline">{AUTHOR_TAGLINE}</p>
+    <p class="profile-bio">{PROFILE_BIO}</p>
+    <div class="profile-links">
+      <a href={`https://github.com/${AUTHOR_GITHUB}`}>GitHub</a>
+      <a href={`mailto:${AUTHOR_EMAIL}`}>邮箱</a>
+    </div>
+  </div>
+</aside>

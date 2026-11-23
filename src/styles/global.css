@@ -193,6 +193,90 @@ main {
   margin: 4px 0;
 }
 
+/* ---------- hero ---------- */
+
+.hero {
+  padding: 32px 0 28px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+}
+
+.hero-eyebrow {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+}
+
+.hero-title {
+  font-size: 38px;
+  line-height: 1.2;
+  margin: 0 0 10px;
+  letter-spacing: -0.01em;
+}
+
+.hero-tagline {
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.hero-slogan {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* ---------- profile card ---------- */
+
+.profile-card {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-top: 56px;
+  padding: 22px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.profile-body {
+  min-width: 0;
+}
+
+.profile-name {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.profile-tagline {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.profile-bio {
+  margin: 0 0 10px;
+  color: var(--text-2);
+  font-size: 14.5px;
+}
+
+.profile-links {
+  display: flex;
+  gap: 14px;
+  font-size: 13.5px;
+}
+
 /* ---------- post list ---------- */
 
 .post-list {
@@ -525,6 +609,20 @@ html[data-theme='dark'] .astro-code span {
 
   .header-inner {
     min-height: 58px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .profile-card {
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .profile-avatar {
+    width: 52px;
+    height: 52px;
   }
 }
 
