@@ -12,14 +12,15 @@ export async function getStaticPaths() {
       post,
       prev: (posts[index - 1] ?? null) as Post | null,
       next: (posts[index + 1] ?? null) as Post | null,
+      allPosts: posts,
     },
   }));
 }
 
-const { post, prev, next } = Astro.props;
+const { post, prev, next, allPosts } = Astro.props;
 const { Content } = await render(post);
 ---
 
-<PostLayout post={post} prev={prev} next={next}>
+<PostLayout post={post} prev={prev} next={next} allPosts={allPosts}>
   <Content />
 </PostLayout>

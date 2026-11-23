@@ -28,3 +28,7 @@ pnpm-debug.log*
 
 # 库内写作指南仅本地使用，不参与发布
 src/content/posts/写作指南.md
+
+# 本地分析临时文件
+.ref-*
+.chrome-tmp

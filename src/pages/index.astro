@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostList from '../components/PostList.astro';
 import Hero from '../components/Hero.astro';
-import ProfileCard from '../components/ProfileCard.astro';
+import Sidebar from '../components/Sidebar.astro';
 import { getPublishedPosts } from '../lib/posts';
 
 const posts = await getPublishedPosts();
@@ -10,8 +10,13 @@ const posts = await getPublishedPosts();
 
 <BaseLayout>
   <Hero />
-  <h1 class="page-title">文章</h1>
-  <p class="page-subtitle">共 {posts.length} 篇。</p>
-  <PostList posts={posts} />
-  <ProfileCard />
+  <div class="layout">
+    <div class="layout-main">
+      <h1 class="page-title">
+        文章 <span class="page-count">共 {posts.length} 篇</span>
+      </h1>
+      <PostList posts={posts} />
+    </div>
+    <Sidebar posts={posts} />
+  </div>
 </BaseLayout>

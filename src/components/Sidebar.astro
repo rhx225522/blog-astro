@@ -1,0 +1,67 @@
+---
+import {
+  AUTHOR,
+  AUTHOR_TAGLINE,
+  PROFILE_BIO,
+  AUTHOR_GITHUB,
+} from '../consts';
+import { collectTags, formatDate, type Post } from '../lib/posts';
+import { postUrl, tagUrl, withBase } from '../lib/url';
+
+interface Props {
+  posts: Post[];
+}
+
+const { posts } = Astro.props;
+const recent = posts.slice(0, 5);
+const tags = collectTags(posts).slice(0, 12);
+
+const shortDate = (date: Date) => formatDate(date).slice(5).replace('-', '/');
+---
+
+<aside class="sidebar">
+  <section class="side-card profile-card">
+    <img
+      class="profile-avatar"
+      src={`https://github.com/${AUTHOR_GITHUB}.png`}
+      alt={`${AUTHOR} 的头像`}
+      width="64"
+      height="64"
+      loading="lazy"
+    />
+    <p class="profile-name">{AUTHOR}</p>
+    <p class="profile-tagline">{AUTHOR_TAGLINE}</p>
+    <p class="profile-bio">{PROFILE_BIO}</p>
+    <a class="profile-more" href={withBase('/about/')}>关于我 →</a>
+  </section>
+
+  <section class="side-card">
+    <h3 class="side-title">最新文章</h3>
+    <ul class="recent-list">
+      {
+        recent.map((post) => (
+          <li>
+            <a class="recent-link" href={postUrl(post.id)}>{post.data.title}</a>
+            <span class="recent-date">{shortDate(post.data.date)}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="side-card">
+    <h3 class="side-title">标签</h3>
+    <ul class="side-tags">
+      {
+        tags.map(({ tag, count }) => (
+          <li>
+            <a href={tagUrl(tag)}>
+              #{tag}
+              <span class="count">{count}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</aside>
