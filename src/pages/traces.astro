@@ -1,0 +1,432 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../consts';
+
+const configured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+---
+
+<BaseLayout title="留痕" description="来都来了，随便写点什么吧。">
+  <section class="trace-intro">
+    <h1 class="page-title">留痕</h1>
+    <p class="trace-lead">
+      来都来了，随便写点什么吧，譬如「到此一游」什么的……不用登录，随便贴。
+    </p>
+  </section>
+
+  <section
+    class="trace-composer"
+    id="trace-root"
+    data-supabase-url={SUPABASE_URL}
+    data-supabase-key={SUPABASE_ANON_KEY}
+  >
+    <div class="trace-bar">
+      <div class="trace-tabs" role="tablist" aria-label="留言方式">
+        <button class="trace-tab is-active" type="button" data-mode="draw" role="tab" aria-selected="true">
+          手写
+        </button>
+        <button class="trace-tab" type="button" data-mode="text" role="tab" aria-selected="false">
+          打字
+        </button>
+      </div>
+      <div class="trace-swatches" role="group" aria-label="墨色">
+        <button class="swatch is-active" type="button" data-ink="#1c1c1a" style="--swatch:#1c1c1a" aria-label="墨黑"></button>
+        <button class="swatch" type="button" data-ink="#c0392b" style="--swatch:#c0392b" aria-label="朱红"></button>
+        <button class="swatch" type="button" data-ink="#2f6fed" style="--swatch:#2f6fed" aria-label="靛蓝"></button>
+        <button class="swatch" type="button" data-ink="#4b7b4b" style="--swatch:#4b7b4b" aria-label="苔绿"></button>
+        <button class="swatch" type="button" data-ink="#b8860b" style="--swatch:#b8860b" aria-label="秋金"></button>
+      </div>
+    </div>
+
+    <div class="trace-pane" data-pane="draw">
+      <div class="trace-tools">
+        <div class="trace-sizes" role="group" aria-label="笔画粗细">
+          <button class="trace-toolbtn" type="button" data-size="2">细</button>
+          <button class="trace-toolbtn is-active" type="button" data-size="4">中</button>
+          <button class="trace-toolbtn" type="button" data-size="8">粗</button>
+        </div>
+        <span class="trace-divider" aria-hidden="true"></span>
+        <button class="trace-toolbtn" type="button" data-action="eraser">橡皮</button>
+        <button class="trace-toolbtn" type="button" data-action="undo">撤销</button>
+        <button class="trace-toolbtn" type="button" data-action="clear">清空</button>
+      </div>
+
+      <div class="trace-paper">
+        <canvas id="trace-canvas" width="900" height="600" aria-label="手写画板"></canvas>
+      </div>
+      <p class="trace-hint">在方格纸上随便画，写完点下面「贴到墙上」。</p>
+    </div>
+
+    <div class="trace-pane" data-pane="text" hidden>
+      <textarea
+        id="trace-text"
+        class="trace-text"
+        maxlength="80"
+        rows="5"
+        placeholder="譬如：到此一游，下次还来。"></textarea>
+      <p class="trace-hint"><span id="trace-count">0</span> / 80 字</p>
+    </div>
+
+    <div class="trace-submit">
+      <input
+        id="trace-nickname"
+        class="trace-nickname"
+        type="text"
+        maxlength="20"
+        placeholder="昵称（可不填）"
+        autocomplete="nickname"
+      />
+      <button id="trace-post" class="trace-post" type="button">贴到墙上</button>
+    </div>
+    <p class="trace-status" id="trace-status" role="status"></p>
+    {
+      !configured && (
+        <p class="trace-hint">
+          还没接上存储：在 src/consts.ts 里填好 SUPABASE_URL 和 SUPABASE_ANON_KEY 就能贴了。
+        </p>
+      )
+    }
+  </section>
+
+  <section class="trace-wall-section" aria-label="墙上的留言">
+    <p class="trace-wall-meta" id="trace-wall-meta"></p>
+    <div class="trace-wall" id="trace-wall"></div>
+  </section>
+</BaseLayout>
+
+<script>
+  type Trace = {
+    id: number;
+    created_at: string;
+    nickname: string | null;
+    kind: 'draw' | 'text';
+    content: string;
+    ink: string | null;
+    rotate: number | null;
+  };
+
+  let traceAbort: AbortController | undefined;
+
+  document.addEventListener('astro:page-load', () => {
+    traceAbort?.abort();
+    traceAbort = new AbortController();
+    const signal = traceAbort.signal;
+
+    const root = document.getElementById('trace-root');
+    if (!root) return;
+
+    const supabaseUrl = (root.dataset.supabaseUrl ?? '').replace(/\/+$/, '');
+    const supabaseKey = root.dataset.supabaseKey ?? '';
+    const configured = Boolean(supabaseUrl && supabaseKey);
+
+    const status = document.getElementById('trace-status') as HTMLParagraphElement;
+    const wall = document.getElementById('trace-wall') as HTMLDivElement;
+    const wallMeta = document.getElementById('trace-wall-meta') as HTMLParagraphElement;
+    const nickname = document.getElementById('trace-nickname') as HTMLInputElement;
+    const postButton = document.getElementById('trace-post') as HTMLButtonElement;
+    const textArea = document.getElementById('trace-text') as HTMLTextAreaElement;
+    const textCount = document.getElementById('trace-count') as HTMLSpanElement;
+    const canvas = document.getElementById('trace-canvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d')!;
+
+    /* ---------- 画板 ---------- */
+
+    const CANVAS_W = canvas.width;
+    const CANVAS_H = canvas.height;
+    type Point = { x: number; y: number };
+    type Stroke = { color: string; width: number; erase: boolean; points: Point[] };
+
+    let strokes: Stroke[] = [];
+    let active: Stroke | null = null;
+    let ink = '#1c1c1a';
+    let brushSize = 4;
+    let erasing = false;
+
+    const drawStroke = (stroke: Stroke) => {
+      ctx.save();
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.globalCompositeOperation = stroke.erase ? 'destination-out' : 'source-over';
+      ctx.strokeStyle = stroke.color;
+      ctx.lineWidth = stroke.width;
+      ctx.beginPath();
+      stroke.points.forEach((point, index) => {
+        if (index === 0) ctx.moveTo(point.x, point.y);
+        else ctx.lineTo(point.x, point.y);
+      });
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const redraw = () => {
+      ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+      strokes.forEach(drawStroke);
+    };
+
+    const pointFromEvent = (event: PointerEvent): Point => {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: ((event.clientX - rect.left) / rect.width) * CANVAS_W,
+        y: ((event.clientY - rect.top) / rect.height) * CANVAS_H,
+      };
+    };
+
+    canvas.addEventListener(
+      'pointerdown',
+      (event) => {
+        if (event.button !== 0 && event.pointerType === 'mouse') return;
+        event.preventDefault();
+        canvas.setPointerCapture(event.pointerId);
+        active = { color: ink, width: erasing ? brushSize * 2 : brushSize, erase: erasing, points: [pointFromEvent(event)] };
+        strokes.push(active);
+      },
+      { signal }
+    );
+
+    canvas.addEventListener(
+      'pointermove',
+      (event) => {
+        if (!active) return;
+        event.preventDefault();
+        const previous = active.points[active.points.length - 1];
+        const next = pointFromEvent(event);
+        if (Math.hypot(next.x - previous.x, next.y - previous.y) < 1) return;
+        active.points.push(next);
+
+        ctx.save();
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.globalCompositeOperation = active.erase ? 'destination-out' : 'source-over';
+        ctx.strokeStyle = active.color;
+        ctx.lineWidth = active.width;
+        ctx.beginPath();
+        ctx.moveTo(previous.x, previous.y);
+        ctx.lineTo(next.x, next.y);
+        ctx.stroke();
+        ctx.restore();
+      },
+      { signal }
+    );
+
+    const endStroke = (event: PointerEvent) => {
+      if (!active) return;
+      active = null;
+      if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+    };
+
+    canvas.addEventListener('pointerup', endStroke, { signal });
+    canvas.addEventListener('pointercancel', endStroke, { signal });
+    canvas.addEventListener('pointerleave', (event) => {
+      if (active && event.pointerType === 'mouse' && !canvas.hasPointerCapture(event.pointerId)) active = null;
+    }, { signal });
+
+    /* ---------- 工具栏 ---------- */
+
+    const toolButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.trace-toolbtn'));
+    const setEraser = (on: boolean) => {
+      erasing = on;
+      document.querySelector<HTMLButtonElement>('[data-action="eraser"]')?.classList.toggle('is-active', on);
+      canvas.style.cursor = on ? 'cell' : 'crosshair';
+    };
+
+    document.querySelectorAll<HTMLButtonElement>('.trace-toolbtn[data-size]').forEach((button) => {
+      button.addEventListener('click', () => {
+        brushSize = Number(button.dataset.size ?? 4);
+        document.querySelectorAll('.trace-toolbtn[data-size]').forEach((other) => other.classList.toggle('is-active', other === button));
+      }, { signal });
+    });
+
+    toolButtons.forEach((button) => {
+      const action = button.dataset.action;
+      if (!action) return;
+      button.addEventListener(
+        'click',
+        () => {
+          if (action === 'eraser') setEraser(!erasing);
+          if (action === 'undo') {
+            strokes.pop();
+            redraw();
+          }
+          if (action === 'clear') {
+            strokes = [];
+            redraw();
+          }
+        },
+        { signal }
+      );
+    });
+
+    document.querySelectorAll<HTMLButtonElement>('.swatch').forEach((swatch) => {
+      swatch.addEventListener('click', () => {
+        ink = swatch.dataset.ink ?? '#1c1c1a';
+        document.querySelectorAll('.swatch').forEach((other) => other.classList.toggle('is-active', other === swatch));
+      }, { signal });
+    });
+
+    /* ---------- 模式切换 ---------- */
+
+    document.querySelectorAll<HTMLButtonElement>('.trace-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const mode = tab.dataset.mode ?? 'draw';
+        document.querySelectorAll('.trace-tab').forEach((other) => {
+          const isActive = other === tab;
+          other.classList.toggle('is-active', isActive);
+          other.setAttribute('aria-selected', String(isActive));
+        });
+        document.querySelectorAll<HTMLElement>('.trace-pane').forEach((pane) => {
+          pane.hidden = pane.dataset.pane !== mode;
+        });
+      }, { signal });
+    });
+
+    textArea.addEventListener('input', () => {
+      textCount.textContent = String(textArea.value.length);
+    }, { signal });
+
+    /* ---------- 贴到墙上 ---------- */
+
+    const currentMode = () => (document.querySelector('.trace-tab.is-active')?.dataset.mode ?? 'draw') as 'draw' | 'text';
+
+    const post = async () => {
+      const mode = currentMode();
+      let content = '';
+      let kind: 'draw' | 'text' = mode;
+
+      if (mode === 'draw') {
+        if (strokes.length === 0) {
+          status.textContent = '画点什么再贴吧。';
+          return;
+        }
+        content = canvas.toDataURL('image/webp', 0.85);
+        if (!content.startsWith('data:image/webp')) content = canvas.toDataURL('image/png');
+      } else {
+        content = textArea.value.trim();
+        if (!content) {
+          status.textContent = '写点什么再贴吧。';
+          return;
+        }
+      }
+
+      if (content.length > 400000) {
+        status.textContent = '这张画有点重，换张简单的再贴吧。';
+        return;
+      }
+
+      const payload = {
+        nickname: nickname.value.trim() || null,
+        kind,
+        content,
+        ink: mode === 'text' ? ink : null,
+        rotate: Math.round((Math.random() * 3.6 - 1.8) * 10) / 10,
+      };
+
+      if (!configured) {
+        status.textContent = '还没接上存储，填好 consts.ts 里的 Supabase 配置就能贴了。';
+        return;
+      }
+
+      postButton.disabled = true;
+      status.textContent = '正在贴上墙…';
+      try {
+        const response = await fetch(`${supabaseUrl}/rest/v1/traces`, {
+          method: 'POST',
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json',
+            Prefer: 'return=representation',
+          },
+          body: JSON.stringify([payload]),
+        });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const [row] = (await response.json()) as Trace[];
+        if (row) wall.prepend(noteElement(row));
+        status.textContent = '贴好了，墙上见。';
+        strokes = [];
+        redraw();
+        textArea.value = '';
+        textCount.textContent = '0';
+        wall.querySelector('.trace-empty')?.remove();
+      } catch {
+        status.textContent = '贴失败了，过一会再试一次。';
+      } finally {
+        postButton.disabled = false;
+      }
+    };
+
+    postButton.addEventListener('click', post, { signal });
+
+    /* ---------- 墙面 ---------- */
+
+    const formatDate = (value: string) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return `${date.getMonth() + 1} 月 ${date.getDate()} 日`;
+    };
+
+    const noteElement = (row: Trace) => {
+      const figure = document.createElement('figure');
+      figure.className = 'trace-note';
+      const rotation = row.rotate ?? ((row.id % 5) - 2) * 0.9;
+      figure.style.setProperty('--rot', `${rotation}deg`);
+
+      if (row.kind === 'draw' && row.content.startsWith('data:image')) {
+        const image = document.createElement('img');
+        image.src = row.content;
+        image.alt = '手写留言';
+        image.loading = 'lazy';
+        figure.appendChild(image);
+      } else {
+        const text = document.createElement('blockquote');
+        text.className = 'trace-note-text';
+        text.style.color = row.ink || 'var(--text)';
+        text.textContent = row.content;
+        figure.appendChild(text);
+      }
+
+      const caption = document.createElement('figcaption');
+      const name = document.createElement('span');
+      name.textContent = row.nickname?.trim() || '匿名';
+      const time = document.createElement('span');
+      time.textContent = formatDate(row.created_at);
+      caption.append(name, time);
+      figure.appendChild(caption);
+      return figure;
+    };
+
+    const loadWall = async () => {
+      wall.innerHTML = '';
+      wallMeta.textContent = '';
+
+      if (!configured) {
+        emptyState('墙上还空着，等接上存储就能贴了。');
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${supabaseUrl}/rest/v1/traces?select=id,created_at,nickname,kind,content,ink,rotate&order=created_at.desc&limit=60`,
+          { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+        );
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const rows = (await response.json()) as Trace[];
+        if (rows.length === 0) {
+          emptyState('墙上还空着，第一个痕迹留给你。');
+        } else {
+          wallMeta.textContent = `墙上已经留下了 ${rows.length} 条痕迹`;
+          rows.forEach((row) => wall.appendChild(noteElement(row)));
+        }
+      } catch {
+        emptyState('墙没搬过来，刷新一下试试。');
+      }
+    };
+
+    const emptyState = (message: string) => {
+      const empty = document.createElement('p');
+      empty.className = 'trace-empty';
+      empty.textContent = message;
+      wall.appendChild(empty);
+    };
+
+    loadWall();
+  });
+</script>

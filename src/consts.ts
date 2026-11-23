@@ -20,9 +20,14 @@ export const GISCUS_REPO_ID = 'R_kgDOV3NWJw';
 export const GISCUS_CATEGORY = 'Announcements';
 export const GISCUS_CATEGORY_ID = 'DIC_kwDOV3NWJ84DLxYG';
 
+// Supabase 存储（留痕墙用）：填入 Project URL 与 anon public key 后即可匿名留言
+export const SUPABASE_URL = 'https://rgrwpnbmtrobmegvfdtx.supabase.co';
+export const SUPABASE_ANON_KEY = 'sb_publishable_YdD1AWJ84OmKSviZKE2Zaw_bsA_1jhP';
+
 export const NAV = [
   { label: '文章', href: '/' },
   { label: '归档', href: '/archive/' },
   { label: '标签', href: '/tags/' },
+  { label: '留痕', href: '/traces/' },
   { label: '关于', href: '/about/' },
 ];
