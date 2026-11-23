@@ -11,6 +11,8 @@
   --radius: 8px;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+    "SimSun", serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 }
@@ -254,8 +256,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  position: sticky;
-  top: 88px;
 }
 
 .side-card {
@@ -377,6 +377,80 @@ main {
   font-size: 11px;
 }
 
+/* ---------- toc（文章目录） ---------- */
+
+.layout-side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  position: sticky;
+  top: 88px;
+}
+
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.toc-list a {
+  color: var(--text-2);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.toc-list a:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.toc-list li.toc-sub {
+  padding-left: 14px;
+}
+
+.toc-list li.toc-sub a {
+  font-size: 13px;
+}
+
+/* ---------- back to top ---------- */
+
+.back-top {
+  position: fixed;
+  right: 24px;
+  bottom: 32px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--text-2);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  z-index: 20;
+}
+
+.back-top.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.back-top:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 /* ---------- post card grid ---------- */
 
 .post-grid {
@@ -427,6 +501,21 @@ main {
   line-height: 1.7;
   margin: 0 0 16px;
   flex: 1;
+  font-family: var(--font-serif);
+}
+
+.post-card-cover {
+  display: block;
+  margin: -20px -20px 16px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden;
+}
+
+.post-card-cover img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
 }
 
 .post-card-footer {
@@ -489,6 +578,7 @@ main {
 
 .post-body {
   font-size: 16.5px;
+  font-family: var(--font-serif);
 }
 
 .post-body > :first-child {
@@ -718,7 +808,7 @@ html[data-theme='dark'] .astro-code span {
     gap: 28px;
   }
 
-  .sidebar {
+  .layout-side {
     position: static;
   }
 

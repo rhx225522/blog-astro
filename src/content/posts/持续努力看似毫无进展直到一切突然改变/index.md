@@ -3,6 +3,7 @@ title: "持续努力看似毫无进展，直到一切突然改变"
 date: "2026-11-23"
 summary: ""
 tags: []
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123084541969.png"
 draft: false
 ---
 

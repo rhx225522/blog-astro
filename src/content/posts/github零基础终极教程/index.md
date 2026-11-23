@@ -6,6 +6,7 @@ tags:
   - GitHub
   - 开源
   - AI教程
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123110227664.png"
 draft: false
 ---
 

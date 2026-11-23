@@ -3,6 +3,7 @@ title: "如何在那些看不到结果的日子里坚持"
 date: "2026-11-23"
 summary: ""
 tags: []
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123083000202.png"
 draft: false
 ---
 

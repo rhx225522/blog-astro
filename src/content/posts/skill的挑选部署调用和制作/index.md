@@ -4,6 +4,7 @@ date: "2026-11-23"
 summary: "Skill 不是提示词，而是把流程、标准、工具、素材打包成可反复调用的工作手册——从挑选、部署到触发调用的一次完整梳理。"
 tags:
   - AI
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123093855545.png"
 draft: false
 ---
 

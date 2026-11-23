@@ -5,6 +5,7 @@ summary: "从反应期到婴儿期，一个人心智成熟的八个阶段，以�
 tags:
   - 认知
   - 个人成长
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261123104648806.png"
 draft: false
 ---
 

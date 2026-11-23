@@ -3,6 +3,7 @@ title: "成长如抽筋剥骨般疼痛"
 date: "2026-11-22"
 summary: ""
 tags: []
+cover: "https://cdn.jsdelivr.net/gh/rhx225522/picgo-bed@main/img/20261122131612129.png"
 draft: false
 ---
 

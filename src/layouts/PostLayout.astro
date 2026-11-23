@@ -41,7 +41,14 @@ const { title, date, updated, summary, tags } = post.data;
         <slot />
       </div>
     </article>
-    {allPosts.length > 0 && <Sidebar posts={allPosts} />}
+
+    <div class="layout-side">
+      <nav class="side-card toc" aria-label="本文目录">
+        <h3 class="side-title">目录</h3>
+        <ul id="toc-list" class="toc-list"></ul>
+      </nav>
+      {allPosts.length > 0 && <Sidebar posts={allPosts} />}
+    </div>
   </div>
 
   {
@@ -64,3 +71,27 @@ const { title, date, updated, summary, tags } = post.data;
     )
   }
 </BaseLayout>
+
+<script>
+  const body = document.querySelector('.post-body');
+  const tocWrap = document.querySelector('.toc');
+  const tocList = document.getElementById('toc-list');
+
+  if (body && tocWrap && tocList) {
+    const heads = Array.from(body.querySelectorAll('h2, h3'));
+    if (heads.length === 0) {
+      tocWrap.style.display = 'none';
+    } else {
+      heads.forEach((h, i) => {
+        if (!h.id) h.id = `section-${i}`;
+        const li = document.createElement('li');
+        if (h.tagName === 'H3') li.classList.add('toc-sub');
+        const a = document.createElement('a');
+        a.href = `#${h.id}`;
+        a.textContent = h.textContent ?? '';
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    }
+  }
+</script>

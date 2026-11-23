@@ -29,6 +29,7 @@ const posts = defineCollection({
     updated: isoDate.optional(),
     summary: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    cover: z.string().optional(),
     draft: z.boolean().default(false),
   }),
 });
