@@ -14,6 +14,12 @@ export const AUTHOR_GITHUB = 'rhx225522';
 // GitHub 头像直链
 export const AUTHOR_AVATAR = 'https://avatars.githubusercontent.com/u/329394868?v=4';
 
+// Giscus 评论区（category-id 开启 Discussions 后从 giscus.app 复制填入）
+export const GISCUS_REPO = 'rhx225522/blog-astro';
+export const GISCUS_REPO_ID = 'R_kgDOV3NWJw';
+export const GISCUS_CATEGORY = 'Announcements';
+export const GISCUS_CATEGORY_ID = '';
+
 export const NAV = [
   { label: '文章', href: '/' },
   { label: '归档', href: '/archive/' },

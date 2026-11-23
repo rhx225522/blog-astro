@@ -1,0 +1,34 @@
+---
+import {
+  GISCUS_REPO,
+  GISCUS_REPO_ID,
+  GISCUS_CATEGORY,
+  GISCUS_CATEGORY_ID,
+} from '../consts';
+
+// 分类 ID 未填入前不渲染评论区，避免报错
+const enabled = Boolean(GISCUS_REPO_ID && GISCUS_CATEGORY_ID);
+---
+
+{
+  enabled && (
+    <section class="comments">
+      <script
+        src="https://giscus.app/client.js"
+        data-repo={GISCUS_REPO}
+        data-repo-id={GISCUS_REPO_ID}
+        data-category={GISCUS_CATEGORY}
+        data-category-id={GISCUS_CATEGORY_ID}
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async
+      ></script>
+    </section>
+  )
+}
