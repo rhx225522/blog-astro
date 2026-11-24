@@ -27,13 +27,13 @@ const sayItems = await Promise.all(
         {sayItems.map(({ say, Content }) => (
           <li class="timeline-item" data-say-id={say.id}>
             <span class="timeline-node" aria-hidden="true"></span>
+            <div class="say-meta">
+              <time class="say-date" datetime={say.data.date.toISOString()}>
+                {formatDate(say.data.date)}
+              </time>
+              {say.data.mood && <span class="say-mood">{say.data.mood}</span>}
+            </div>
             <article class="say-card">
-              <div class="say-head">
-                <time class="say-date" datetime={say.data.date.toISOString()}>
-                  {formatDate(say.data.date)}
-                </time>
-                {say.data.mood && <span class="say-mood">{say.data.mood}</span>}
-              </div>
               <div class="say-body">
                 <Content />
               </div>
