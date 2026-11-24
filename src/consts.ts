@@ -25,9 +25,10 @@ export const SUPABASE_URL = 'https://rgrwpnbmtrobmegvfdtx.supabase.co';
 export const SUPABASE_ANON_KEY = 'sb_publishable_YdD1AWJ84OmKSviZKE2Zaw_bsA_1jhP';
 
 export const NAV = [
-  { label: '文章', href: '/' },
-  { label: '归档', href: '/archive/' },
-  { label: '标签', href: '/tags/' },
+  { label: '首页', href: '/' },
+  { label: '作品', href: '/works/' },
+  { label: '文章', href: '/posts/' },
+  { label: '说说', href: '/says/' },
   { label: '留痕', href: '/traces/' },
   { label: '关于', href: '/about/' },
 ];

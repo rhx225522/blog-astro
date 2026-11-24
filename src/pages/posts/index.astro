@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostList from '../../components/PostList.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import IconRail from '../../components/IconRail.astro';
+import { getPublishedPosts } from '../../lib/posts';
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title="文章">
+  <div class="home-layout">
+    <IconRail />
+
+    <div class="layout-main">
+      <h1 class="page-title">文章</h1>
+      <p class="page-subtitle">按时间新到旧，写下来的长文章。</p>
+      <PostList posts={posts} />
+    </div>
+
+    <Sidebar posts={posts} />
+  </div>
+</BaseLayout>

@@ -47,13 +47,7 @@ const year = new Date().getFullYear();
     <meta name="author" content={AUTHOR} />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
-    <link
-      rel="alternate"
-      type="application/rss+xml"
-      title={`${SITE_TITLE} · RSS`}
-      href={withBase('/rss.xml')}
-    />
+    <link rel="icon" type="image/jpeg" href={withBase('/avatar.jpg')} />
 
     <meta property="og:type" content={type} />
     <meta property="og:title" content={pageTitle} />
@@ -79,8 +73,6 @@ const year = new Date().getFullYear();
       <div class="container">
         <p>© {year} {AUTHOR}</p>
         <p>
-          <a href={withBase('/rss.xml')}>RSS</a>
-          <span aria-hidden="true"> · </span>
           <a href={`mailto:${AUTHOR_EMAIL}`}>{AUTHOR_EMAIL}</a>
         </p>
       </div>

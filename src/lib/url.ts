@@ -13,15 +13,3 @@ export function withBase(path = '/'): string {
 export function postUrl(slug: string): string {
   return withBase(`/posts/${slug}/`);
 }
-
-export function tagUrl(tag: string): string {
-  return withBase(`/tags/${tagSlug(tag)}/`);
-}
-
-/**
- * 标签转 URL 片段：空白与斜杠统一替换为短横线，保留中文。
- * 链接与路由生成必须共用这一个函数，保证两者一致。
- */
-export function tagSlug(tag: string): string {
-  return tag.trim().replace(/[\s/]+/g, '-').toLowerCase();
-}

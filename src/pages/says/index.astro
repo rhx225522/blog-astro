@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedSays } from '../../lib/says';
+import { formatDate } from '../../lib/posts';
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../consts';
+import { render } from 'astro:content';
+
+const says = await getPublishedSays();
+
+const sayItems = await Promise.all(
+  says.map(async (say) => {
+    const { Content } = await render(say);
+    return { say, Content };
+  })
+);
+---
+
+<BaseLayout title="说说">
+  <h1 class="page-title">说说</h1>
+  <p class="page-subtitle">短短的碎片，想到就记一笔。</p>
+
+  {
+    sayItems.length === 0 ? (
+      <p class="empty">还没有说说，稍后补上。</p>
+    ) : (
+      <ul id="say-root" class="timeline" data-supabase-url={SUPABASE_URL} data-supabase-key={SUPABASE_ANON_KEY}>
+        {sayItems.map(({ say, Content }) => (
+          <li class="timeline-item" data-say-id={say.id}>
+            <span class="timeline-node" aria-hidden="true"></span>
+            <article class="say-card">
+              <div class="say-head">
+                <time class="say-date" datetime={say.data.date.toISOString()}>
+                  {formatDate(say.data.date)}
+                </time>
+                {say.data.mood && <span class="say-mood">{say.data.mood}</span>}
+              </div>
+              <div class="say-body">
+                <Content />
+              </div>
+              <div class="say-foot">
+                <span class="say-views" data-views title="浏览量">
+                  <span aria-hidden="true">👁</span> <span class="num">0</span>
+                </span>
+                <button class="say-like" type="button" data-like data-say-id={say.id} aria-label="点赞这条说说">
+                  <span aria-hidden="true">👍</span> <span class="num">0</span>
+                </button>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</BaseLayout>
+
+<script>
+  let sayAbort: AbortController | undefined;
+
+  document.addEventListener('astro:page-load', () => {
+    sayAbort?.abort();
+    sayAbort = new AbortController();
+    const signal = sayAbort.signal;
+
+    const root = document.getElementById('say-root');
+    if (!root) return;
+
+    const supabaseUrl = (root.dataset.supabaseUrl ?? '').replace(/\/+$/, '');
+    const supabaseKey = root.dataset.supabaseKey ?? '';
+    const configured = Boolean(supabaseUrl && supabaseKey);
+
+    const items = Array.from(root.querySelectorAll<HTMLElement>('.timeline-item'));
+
+    if (!configured) {
+      root.querySelectorAll('.say-foot').forEach((f) => ((f as HTMLElement).style.display = 'none'));
+      return;
+    }
+
+    const headers = {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json',
+    };
+
+    // 拉取已有计数，填到卡片上
+    fetch(`${supabaseUrl}/rest/v1/say_metrics?select=say_id,views,likes`, { headers })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows: Array<{ say_id: string; views: number; likes: number }>) => {
+        const map = new Map(rows.map((r) => [r.say_id, r]));
+        items.forEach((item) => {
+          const row = map.get(item.dataset.sayId ?? '');
+          if (!row) return;
+          const views = item.querySelector('[data-views] .num');
+          const likes = item.querySelector('[data-like] .num');
+          if (views) views.textContent = String(row.views);
+          if (likes) likes.textContent = String(row.likes);
+        });
+      })
+      .catch(() => {});
+
+    // 浏览量：同一会话内每条只记一次
+    try {
+      const seen: string[] = JSON.parse(sessionStorage.getItem('say-views-seen') ?? '[]');
+      items.forEach((item) => {
+        const id = item.dataset.sayId ?? '';
+        if (!seen.includes(id)) {
+          seen.push(id);
+          fetch(`${supabaseUrl}/rest/v1/rpc/bump_say`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ p_say_id: id, p_col: 'views' }),
+          }).catch(() => {});
+        }
+      });
+      sessionStorage.setItem('say-views-seen', JSON.stringify(seen));
+    } catch {
+      /* sessionStorage 不可用时忽略 */
+    }
+
+    // 点赞：localStorage 记一次，防重复点
+    items.forEach((item) => {
+      const btn = item.querySelector<HTMLButtonElement>('[data-like]');
+      if (!btn) return;
+      const id = btn.dataset.sayId ?? '';
+
+      const syncLiked = () => {
+        if (localStorage.getItem(`say-liked:${id}`)) {
+          btn.classList.add('is-liked');
+          btn.disabled = true;
+        }
+      };
+      syncLiked();
+
+      btn.addEventListener(
+        'click',
+        async () => {
+          if (btn.disabled) return;
+          btn.disabled = true;
+          try {
+            await fetch(`${supabaseUrl}/rest/v1/rpc/bump_say`, {
+              method: 'POST',
+              headers,
+              body: JSON.stringify({ p_say_id: id, p_col: 'likes' }),
+            });
+            localStorage.setItem(`say-liked:${id}`, '1');
+            const num = btn.querySelector('.num');
+            const cur = Number(num?.textContent ?? 0);
+            if (num) num.textContent = String(cur + 1);
+            btn.classList.add('is-liked');
+          } catch {
+            btn.disabled = false;
+          }
+        },
+        { signal }
+      );
+    });
+  });
+</script>

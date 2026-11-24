@@ -42,4 +42,36 @@ const pages = defineCollection({
   }),
 });
 
-export const collections = { posts, pages };
+const works = defineCollection({
+  loader: glob({
+    base: './src/content/works',
+    pattern: '**/index.md',
+    generateId: ({ entry }) => entry.replace(/\/?index\.md$/, ''),
+  }),
+  schema: z.object({
+    title: z.string().min(1, '标题不能为空'),
+    subtitle: z.string().optional(),
+    category: z.string().optional(),
+    level: z.string().optional(),
+    year: z.string().optional(),
+    role: z.string().optional(),
+    tools: z.array(z.string()).default([]),
+    summary: z.string().optional(),
+    order: z.number().default(0),
+    draft: z.boolean().default(false),
+  }),
+});
+
+const says = defineCollection({
+  loader: glob({
+    base: './src/content/says',
+    pattern: '**/*.md',
+  }),
+  schema: z.object({
+    date: isoDate,
+    mood: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { posts, pages, works, says };

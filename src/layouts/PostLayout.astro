@@ -1,6 +1,5 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import TagPill from '../components/TagPill.astro';
 import Sidebar from '../components/Sidebar.astro';
 import Comment from '../components/Comment.astro';
 import type { Post } from '../lib/posts';
@@ -15,7 +14,7 @@ interface Props {
 }
 
 const { post, prev = null, next = null, allPosts = [] } = Astro.props;
-const { title, date, updated, summary, tags } = post.data;
+const { title, date, updated, summary } = post.data;
 ---
 
 <BaseLayout title={title} description={summary ?? title} type="article">
@@ -27,15 +26,6 @@ const { title, date, updated, summary, tags } = post.data;
           <time datetime={date.toISOString()}>{formatDate(date)}</time>
           {updated && <span>更新于 {formatDate(updated)}</span>}
         </div>
-        {
-          tags.length > 0 && (
-            <div class="tag-list">
-              {tags.map((tag) => (
-                <TagPill tag={tag} />
-              ))}
-            </div>
-          )
-        }
       </header>
 
       <div class="post-body">

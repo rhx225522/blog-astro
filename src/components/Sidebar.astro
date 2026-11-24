@@ -6,8 +6,8 @@ import {
   AUTHOR_GITHUB,
   AUTHOR_AVATAR,
 } from '../consts';
-import { collectTags, formatDate, type Post } from '../lib/posts';
-import { postUrl, tagUrl, withBase } from '../lib/url';
+import { formatDate, type Post } from '../lib/posts';
+import { postUrl, withBase } from '../lib/url';
 
 interface Props {
   posts: Post[];
@@ -15,7 +15,6 @@ interface Props {
 
 const { posts } = Astro.props;
 const recent = posts.slice(0, 5);
-const tags = collectTags(posts).slice(0, 12);
 
 const shortDate = (date: Date) => formatDate(date).slice(5).replace('-', '/');
 ---
@@ -33,17 +32,6 @@ const shortDate = (date: Date) => formatDate(date).slice(5).replace('-', '/');
     <p class="profile-name">{AUTHOR}</p>
     <p class="profile-tagline">{AUTHOR_TAGLINE}</p>
     <p class="profile-bio">{PROFILE_BIO}</p>
-    {
-      tags.length > 0 && (
-        <ul class="profile-tags">
-          {tags.slice(0, 5).map(({ tag }) => (
-            <li>
-              <a href={tagUrl(tag)}>#{tag}</a>
-            </li>
-          ))}
-        </ul>
-      )
-    }
     <a class="profile-more" href={withBase('/about/')}>关于我 →</a>
   </section>
 
@@ -55,22 +43,6 @@ const shortDate = (date: Date) => formatDate(date).slice(5).replace('-', '/');
           <li>
             <a class="recent-link" href={postUrl(post.id)}>{post.data.title}</a>
             <span class="recent-date">{shortDate(post.data.date)}</span>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
-
-  <section class="side-card">
-    <h3 class="side-title">标签</h3>
-    <ul class="side-tags">
-      {
-        tags.map(({ tag, count }) => (
-          <li>
-            <a href={tagUrl(tag)}>
-              #{tag}
-              <span class="count">{count}</span>
-            </a>
           </li>
         ))
       }

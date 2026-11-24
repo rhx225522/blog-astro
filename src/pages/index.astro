@@ -1,14 +1,26 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostList from '../components/PostList.astro';
 import Hero from '../components/Hero.astro';
-import Sidebar from '../components/Sidebar.astro';
 import IconRail from '../components/IconRail.astro';
-import { getPublishedPosts, collectTags } from '../lib/posts';
-import { tagUrl, withBase } from '../lib/url';
+import Sidebar from '../components/Sidebar.astro';
+import PostList from '../components/PostList.astro';
+import { getPublishedPosts } from '../lib/posts';
+import { getPublishedWorks } from '../lib/works';
+import { getPublishedSays } from '../lib/says';
+import { render } from 'astro:content';
+import { formatDate } from '../lib/posts';
+import { withBase } from '../lib/url';
 
 const posts = await getPublishedPosts();
-const tags = collectTags(posts).slice(0, 8);
+const works = await getPublishedWorks();
+const says = await getPublishedSays();
+
+const sayItems = await Promise.all(
+  says.slice(0, 3).map(async (say) => {
+    const { Content } = await render(say);
+    return { say, Content };
+  })
+);
 ---
 
 <BaseLayout>
@@ -18,13 +30,70 @@ const tags = collectTags(posts).slice(0, 8);
     <IconRail />
 
     <div class="layout-main">
-      <nav class="filter-bar" aria-label="文章分类">
-        <a class="filter-pill is-active" href={withBase('/')}>全部</a>
-        {tags.map(({ tag }) => (
-          <a class="filter-pill" href={tagUrl(tag)}>#{tag}</a>
-        ))}
-      </nav>
-      <PostList posts={posts} />
+      <section class="home-section">
+        <div class="home-section-head">
+          <h2 class="home-section-title">精选作品</h2>
+          <a class="home-section-more" href={withBase('/works/')}>全部作品 →</a>
+        </div>
+        {
+          works.length === 0 ? (
+            <p class="empty">还没有作品，稍后补上。</p>
+          ) : (
+            <ul class="work-grid">
+              {works.slice(0, 4).map((work) => (
+                <li class="work-card">
+                  <div class="work-card-head">
+                    {work.data.year && <span class="work-year">{work.data.year}</span>}
+                    {work.data.level && <span class="work-level">{work.data.level}</span>}
+                  </div>
+                  <h3 class="work-card-title">{work.data.title}</h3>
+                  {work.data.subtitle && <p class="work-card-subtitle">{work.data.subtitle}</p>}
+                  {work.data.summary && <p class="work-card-summary">{work.data.summary}</p>}
+                  <div class="work-card-foot">
+                    {work.data.role && <span class="work-role">{work.data.role}</span>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
+
+      <section class="home-section">
+        <div class="home-section-head">
+          <h2 class="home-section-title">最新文章</h2>
+          <a class="home-section-more" href={withBase('/posts/')}>全部文章 →</a>
+        </div>
+        <PostList posts={posts.slice(0, 3)} />
+      </section>
+
+      <section class="home-section">
+        <div class="home-section-head">
+          <h2 class="home-section-title">最新说说</h2>
+          <a class="home-section-more" href={withBase('/says/')}>全部说说 →</a>
+        </div>
+        {
+          sayItems.length === 0 ? (
+            <p class="empty">还没有说说，稍后补上。</p>
+          ) : (
+            <ul class="say-list">
+              {sayItems.map(({ say, Content }) => (
+                <li class="say-card">
+                  <div class="say-head">
+                    <time class="say-date" datetime={say.data.date.toISOString()}>
+                      {formatDate(say.data.date)}
+                    </time>
+                    {say.data.mood && <span class="say-mood">{say.data.mood}</span>}
+                  </div>
+                  <div class="say-body">
+                    <Content />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </section>
     </div>
 
     <Sidebar posts={posts} />
