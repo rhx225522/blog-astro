@@ -75,6 +75,24 @@ const sayItems = await Promise.all(
     const root = document.getElementById('say-root');
     if (!root) return;
 
+    // 双列平衡分轨：按卡片高度依次放进当前较矮的一侧，左右不必对称
+    if (!root.querySelector('.timeline-side')) {
+      const left = document.createElement('div');
+      left.className = 'timeline-side left';
+      const right = document.createElement('div');
+      right.className = 'timeline-side right';
+      root.append(left, right);
+
+      const trackItems = Array.from(root.querySelectorAll<HTMLElement>('.timeline-item'));
+      const heights = { left: 0, right: 0 };
+      trackItems.forEach((item) => {
+        const side = heights.left <= heights.right ? left : right;
+        side.appendChild(item);
+        const key = side === left ? 'left' : 'right';
+        heights[key] += item.offsetHeight + 16;
+      });
+    }
+
     const supabaseUrl = (root.dataset.supabaseUrl ?? '').replace(/\/+$/, '');
     const supabaseKey = root.dataset.supabaseKey ?? '';
     const configured = Boolean(supabaseUrl && supabaseKey);
