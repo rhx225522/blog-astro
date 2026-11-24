@@ -1,11 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import IconRail from '../../components/IconRail.astro';
+import Sidebar from '../../components/Sidebar.astro';
 import { getPublishedSays } from '../../lib/says';
-import { formatDate } from '../../lib/posts';
+import { getPublishedPosts, formatDate } from '../../lib/posts';
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../../consts';
 import { render } from 'astro:content';
 
 const says = await getPublishedSays();
+const posts = await getPublishedPosts();
 
 const sayItems = await Promise.all(
   says.map(async (say) => {
@@ -16,8 +19,12 @@ const sayItems = await Promise.all(
 ---
 
 <BaseLayout title="说说">
-  <h1 class="page-title">说说</h1>
-  <p class="page-subtitle">短短的碎片，想到就记一笔。</p>
+  <div class="home-layout">
+    <IconRail />
+
+    <div class="layout-main">
+      <h1 class="page-title">说说</h1>
+      <p class="page-subtitle">短短的碎片，想到就记一笔。</p>
 
   {
     sayItems.length === 0 ? (
@@ -51,6 +58,10 @@ const sayItems = await Promise.all(
       </ul>
     )
   }
+    </div>
+
+    <Sidebar posts={posts} />
+  </div>
 </BaseLayout>
 
 <script>
