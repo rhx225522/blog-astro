@@ -1047,9 +1047,16 @@ main:has(.hero) {
 .say-meta {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
   gap: 8px;
   margin: 0 0 8px;
+}
+
+.timeline-item:nth-child(odd) .say-meta {
+  justify-content: flex-end;
+}
+
+.timeline-item:nth-child(even) .say-meta {
+  justify-content: flex-start;
 }
 
 .say-date {
@@ -1091,29 +1098,58 @@ main:has(.hero) {
   margin-bottom: 0;
 }
 
-/* ---------- 说说瀑布流（CSS multi-column masonry） ---------- */
+/* ---------- 说说时间轴 ---------- */
 
 .timeline {
+  position: relative;
   list-style: none;
   margin: 8px 0 0;
   padding: 0;
-  columns: 2;
-  column-gap: 16px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--line);
+  transform: translateX(-50%);
 }
 
 .timeline-item {
   position: relative;
-  break-inside: avoid;
+  width: 50%;
   margin-bottom: 16px;
 }
 
-/* 瀑布流不保留时间轴竖线与圆点节点（HTML 结构不动，仅视觉隐藏） */
-.timeline::before {
-  content: none;
+.timeline-item:nth-child(odd) {
+  padding-right: 20px;
+}
+
+.timeline-item:nth-child(even) {
+  margin-left: 50%;
+  padding-left: 20px;
 }
 
 .timeline-node {
-  display: none;
+  position: absolute;
+  top: 24px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--bg-elev);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.timeline-item:nth-child(odd) .timeline-node {
+  right: -6.5px;
+}
+
+.timeline-item:nth-child(even) .timeline-node {
+  left: -6.5px;
 }
 
 .say-foot {
@@ -1156,8 +1192,28 @@ main:has(.hero) {
 }
 
 @media (max-width: 900px) {
-  .timeline {
-    columns: 1;
+  .timeline::before {
+    left: 15px;
+    transform: none;
+  }
+
+  .timeline-item,
+  .timeline-item:nth-child(even) {
+    width: 100%;
+    margin-left: 0;
+    padding-left: 42px;
+    padding-right: 0;
+  }
+
+  .timeline-item .timeline-node,
+  .timeline-item:nth-child(odd) .timeline-node,
+  .timeline-item:nth-child(even) .timeline-node {
+    left: 9px;
+    right: auto;
+  }
+
+  .say-meta {
+    justify-content: flex-start;
   }
 }
 
