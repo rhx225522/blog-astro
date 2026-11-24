@@ -75,23 +75,48 @@ const sayItems = await Promise.all(
     const root = document.getElementById('say-root');
     if (!root) return;
 
-    // 双列平衡分轨：按卡片高度依次放进当前较矮的一侧，左右不必对称
-    if (!root.querySelector('.timeline-side')) {
-      const left = document.createElement('div');
-      left.className = 'timeline-side left';
-      const right = document.createElement('div');
-      right.className = 'timeline-side right';
-      root.append(left, right);
-
-      const trackItems = Array.from(root.querySelectorAll<HTMLElement>('.timeline-item'));
-      const heights = { left: 0, right: 0 };
-      trackItems.forEach((item) => {
-        const side = heights.left <= heights.right ? left : right;
-        side.appendChild(item);
-        const key = side === left ? 'left' : 'right';
-        heights[key] += item.offsetHeight + 16;
+    // 自由错落 masonry：按卡片高度放到当前最矮一侧，左右顶部自然错开
+    const layoutMasonry = () => {
+      const narrow = window.matchMedia('(max-width: 900px)').matches;
+      const cards = Array.from(root.querySelectorAll<HTMLElement>('.timeline-item'));
+      cards.forEach((it) => {
+        it.style.top = '';
+        it.style.left = '';
+        it.style.right = '';
       });
-    }
+      if (narrow) {
+        root.style.height = '';
+        return;
+      }
+      let leftH = 0;
+      let rightH = 0;
+      cards.forEach((item) => {
+        const h = item.offsetHeight;
+        if (leftH <= rightH) {
+          item.classList.add('side-left');
+          item.classList.remove('side-right');
+          item.style.top = `${leftH}px`;
+          leftH += h + 16;
+        } else {
+          item.classList.add('side-right');
+          item.classList.remove('side-left');
+          item.style.top = `${rightH}px`;
+          rightH += h + 16;
+        }
+      });
+      root.style.height = `${Math.max(leftH, rightH)}px`;
+    };
+
+    layoutMasonry();
+
+    // 图片加载完成后重排一次，避免长图高度估算偏小
+    let masonryTimer: number | undefined;
+    root.querySelectorAll('img').forEach((img) => {
+      img.addEventListener('load', () => {
+        window.clearTimeout(masonryTimer);
+        masonryTimer = window.setTimeout(layoutMasonry, 60);
+      });
+    });
 
     const supabaseUrl = (root.dataset.supabaseUrl ?? '').replace(/\/+$/, '');
     const supabaseKey = root.dataset.supabaseKey ?? '';
