@@ -1041,6 +1041,7 @@ main:has(.hero) {
   border-radius: var(--radius);
   padding: 18px 20px;
   box-shadow: var(--card-shadow);
+  overflow: hidden;
 }
 
 .say-head {
@@ -1068,6 +1069,14 @@ main:has(.hero) {
   color: var(--text-2);
   font-size: 14px;
   line-height: 1.8;
+}
+
+.say-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0.6em auto 0;
+  border-radius: 8px;
 }
 
 .say-body :last-child {
