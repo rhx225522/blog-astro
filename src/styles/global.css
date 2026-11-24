@@ -1048,7 +1048,7 @@ main:has(.hero) {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0 0 10px;
+  margin: 0 0 8px;
 }
 
 .timeline-item:nth-child(odd) .say-meta {
@@ -1121,7 +1121,7 @@ main:has(.hero) {
 .timeline-item {
   position: relative;
   width: 50%;
-  margin-bottom: 26px;
+  margin-bottom: 16px;
 }
 
 .timeline-item:nth-child(odd) {
@@ -1156,8 +1156,8 @@ main:has(.hero) {
   display: flex;
   align-items: center;
   gap: 18px;
-  margin-top: 14px;
-  padding-top: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 12.5px;
