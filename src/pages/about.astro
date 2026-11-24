@@ -1,6 +1,9 @@
 ---
 import { getEntry, render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPublishedPosts } from '../lib/posts';
+import { SITE_TITLE, AUTHOR_GITHUB, AUTHOR_EMAIL, AUTHOR_AVATAR } from '../consts';
+import { withBase } from '../lib/url';
 
 const entry = await getEntry('pages', 'about');
 if (!entry) {
@@ -8,15 +11,785 @@ if (!entry) {
 }
 
 const { Content } = await render(entry);
+const posts = await getPublishedPosts();
+
+// 性格卡
+const MBTI = 'INFJ';
+const MBTI_NAME = '提倡者';
+const MBTI_LINE = '理想主义，但更愿意把它做成能看见的东西。';
+
+// 技能文字标签
+const SKILLS = [
+  { group: '常在做', items: ['HTML / CSS', 'JavaScript', 'Astro', 'ECharts', 'Python'] },
+  { group: '手上功夫', items: ['AI 绘图', '视频剪辑', '图文排版', '数据可视化'] },
+];
+
+// 兴趣点
+const INTERESTS = [
+  { name: '数据新闻', line: '用一份数据，讲一件能被人记住的事。' },
+  { name: '交互网页', line: '不给人结论，让人自己点着往下走。' },
+  { name: 'AI 插画', line: '先定下角色的标准像，再一格一格把画面铺开。' },
+  { name: '短片剪辑', line: '五张画，也够撑起八十秒。' },
+];
+
+// 头像两侧的小标签（左边三条、右边三条）
+const PILLS_LEFT = ['一页网页改七遍', '白天上课晚上赶稿', '截图存了一整相册'];
+const PILLS_RIGHT = ['想法总比手快半步', '脚踏实地行动派', 'AI时代的文科牲'];
+
+// 用过的软件
+const SOFT = [
+  { name: '剪映', icon: 'capcut' },
+  { name: 'Premiere', icon: 'premiere' },
+  { name: 'Photoshop', icon: 'photoshop' },
+  { name: '可画', icon: 'canva' },
+  { name: 'Trae', icon: 'trae' },
+  { name: 'Obsidian', icon: 'obsidian' },
+  { name: '即梦', icon: 'jimeng' },
+  { name: 'Midjourney', icon: 'midjourney' },
+  { name: 'Excel', icon: 'excel' },
+  { name: 'Python', icon: 'python' },
+];
+
+const startDate = new Date('2026-11-22T00:00:00+08:00');
+const days = Math.max(1, Math.floor((Date.now() - startDate.getTime()) / 86400000) + 1);
 ---
 
 <BaseLayout title={entry.data.title ?? '关于'} description={entry.data.summary}>
-  <article>
-    <header class="post-header">
-      <h1>{entry.data.title ?? '关于'}</h1>
-    </header>
-    <div class="post-body">
-      <Content />
+  <section class="about-head">
+    <ul class="ab-pills p-left">
+      {
+        PILLS_LEFT.map((pill) => (
+          <li>
+            <span class="pill">{pill}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="about-avatar">
+      <img src={AUTHOR_AVATAR} alt={`${SITE_TITLE} 的头像`} width="176" height="176" loading="eager" />
+      <span class="dot" aria-label="在线"></span>
     </div>
-  </article>
+
+    <ul class="ab-pills p-right">
+      {
+        PILLS_RIGHT.map((pill) => (
+          <li>
+            <span class="pill">{pill}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <h1 class="about-title">关于我</h1>
+
+  <div class="about-grid">
+    <section class="ab-card ab-intro">
+      <p class="ab-eyebrow light">你好，很高兴认识你 👋</p>
+      <p class="ab-name">我叫 {SITE_TITLE}</p>
+      <p class="ab-line">西北大学 · 网络与新媒体（智能传播）</p>
+    </section>
+
+    <section class="ab-card ab-slogan">
+      <p class="ab-eyebrow">追求</p>
+      <p class="ab-slogan-text">行动力先于勇气，迭代始于 0 到 1 的飞跃。</p>
+    </section>
+
+    <section class="ab-card ab-intro-text">
+      <p class="ab-eyebrow">关于我</p>
+      <div class="post-body intro-body">
+        <Content />
+        <p class="intro-note">这里的内容仅代表个人观点。</p>
+      </div>
+    </section>
+
+    <section class="ab-card ab-mbti">
+      <p class="ab-eyebrow">性格</p>
+      <h2 class="ab-card-title">{MBTI_NAME}</h2>
+      <p class="mbti-code">{MBTI}</p>
+      <p class="mbti-line">{MBTI_LINE}</p>
+      <div class="mbti-art">
+        <img
+          src={withBase('/about/personality.webp')}
+          alt={`16personalities 的 ${MBTI}「${MBTI_NAME}」形象`}
+          width="498"
+          height="626"
+          loading="eager"
+          decoding="async"
+        />
+      </div>
+      <p class="mbti-link">
+        「{MBTI_NAME}」出自
+        <a href="https://www.16personalities.com/ch" target="_blank" rel="noopener">16personalities</a>
+      </p>
+    </section>
+
+    <section class="ab-card ab-skills">
+      <p class="ab-eyebrow">平常会</p>
+      <h2 class="ab-card-title">技能点</h2>
+      <ul class="soft-grid">
+        {SOFT.map(({ name, icon }) => (
+          <li class="soft-item">
+            <img src={withBase(`/about/soft/${icon}.svg`)} alt="" width="22" height="22" loading="lazy" decoding="async" />
+            <span>{name}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="skill-groups">
+        {SKILLS.map(({ group, items }) => (
+          <div class="skill-group">
+            <p class="skill-group-name">{group}</p>
+            <ul class="skill-chips">
+              {items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="ab-card ab-interests">
+      <p class="ab-eyebrow">兴趣点</p>
+      <ul class="interest-list">
+        {INTERESTS.map(({ name, line }, i) => (
+          <li>
+            <span class="no">{String(i + 1).padStart(2, '0')}</span>
+            <div>
+              <p class="name">{name}</p>
+              <p class="line">{line}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="ab-card ab-env">
+      <p class="ab-eyebrow mono">ENVIRONMENT / 01 · ONLINE</p>
+      <h2 class="ab-card-title">当前环境</h2>
+      <ul class="env-list">
+        <li>
+          <span class="k">STACK</span>
+          <span class="v">Astro</span>
+        </li>
+        <li>
+          <span class="k">DEPLOY</span>
+          <span class="v">GitHub Pages</span>
+        </li>
+        <li>
+          <span class="k">FORM</span>
+          <span class="v">纯静态，没有服务器</span>
+        </li>
+        <li>
+          <span class="k">SINCE</span>
+          <span class="v">2026-11-22</span>
+        </li>
+      </ul>
+      <p class="card-footnote">// TODO: 一直写下去</p>
+    </section>
+
+    <section class="ab-card ab-contact">
+      <p class="ab-eyebrow">找到我</p>
+      <ul class="contact-list">
+        <li>
+          <span class="k">GitHub</span>
+          <a class="v" href={`https://github.com/${AUTHOR_GITHUB}`} rel="me">@{AUTHOR_GITHUB}</a>
+        </li>
+        <li>
+          <span class="k">邮箱</span>
+          <a class="v" href={`mailto:${AUTHOR_EMAIL}`}>{AUTHOR_EMAIL}</a>
+        </li>
+        <li>
+          <span class="k">订阅</span>
+          <a class="v" href={withBase('/rss.xml')}>RSS</a>
+        </li>
+      </ul>
+      <p class="contact-note">有话可以直接来信，通常都会回。</p>
+    </section>
+
+    <section class="ab-card ab-goal col-span">
+      <h2 class="ab-card-title">本站会稳稳写下去。</h2>
+      <p class="goal-line">写下来的东西不一定成熟，但都是真的。</p>
+      <div class="goal-stats">
+        <span class="stat"><b>{posts.length}</b> 篇文章</span>
+        <span class="stat">第 <b>{days}</b> 天</span>
+      </div>
+      <ul class="goal-tags">
+        <li>Astro</li>
+        <li>GitHub Pages</li>
+        <li>RSS</li>
+      </ul>
+    </section>
+  </div>
 </BaseLayout>
+
+<style>
+  /* ---------- 头像区 ---------- */
+
+  .about-head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 22px 26px;
+    padding: 24px 0 18px;
+  }
+
+  .ab-pills {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .p-left {
+    align-items: flex-end;
+  }
+
+  .p-right {
+    align-items: flex-start;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 9px 17px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg-elev);
+    color: var(--text-2);
+    font-size: 13.5px;
+    white-space: nowrap;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .pill:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .about-avatar {
+    position: relative;
+    width: 176px;
+    height: 176px;
+  }
+
+  .about-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-soft);
+    box-shadow: var(--card-shadow);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.25, 1), box-shadow 0.5s ease;
+  }
+
+  .about-avatar.is-near img,
+  .about-avatar:hover img {
+    transform: scale(1.08);
+    box-shadow: var(--card-shadow-hover);
+  }
+
+  .about-avatar .dot {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-strong);
+    border: 3px solid var(--bg-elev);
+    box-shadow: 0 0 0 1px rgba(86, 161, 120, 0.35);
+  }
+
+  .about-title {
+    text-align: center;
+    font-size: 36px;
+    margin: 0 0 30px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- 卡片网格 ---------- */
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .col-span {
+    grid-column: span 12;
+  }
+
+  /* 宽窄错落：7:5 / 5:7 交替，避免两列等宽对齐的死板感 */
+  .ab-intro {
+    grid-column: span 7;
+  }
+
+  .ab-slogan {
+    grid-column: span 5;
+  }
+
+  .ab-skills {
+    grid-column: span 5;
+  }
+
+  .ab-intro-text {
+    grid-column: span 7;
+  }
+
+  .ab-mbti {
+    grid-column: span 5;
+  }
+
+  .ab-env {
+    grid-column: span 5;
+  }
+
+  .ab-interests {
+    grid-column: span 7;
+  }
+
+  .ab-contact {
+    grid-column: span 7;
+  }
+
+  .ab-goal {
+    grid-column: span 12;
+  }
+
+  .ab-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+  }
+
+  .ab-eyebrow {
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+  }
+
+  .ab-eyebrow.light {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .ab-eyebrow.mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  .ab-card-title {
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------- 介绍卡 ---------- */
+
+  .ab-intro {
+    background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+    color: #fff;
+    border: none;
+  }
+
+  .ab-name {
+    margin: 0 0 10px;
+    font-size: 34px;
+    font-weight: 700;
+  }
+
+  .ab-line {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 15.5px;
+  }
+
+  /* ---------- 标语卡 ---------- */
+
+  .ab-slogan-text {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-size: clamp(20px, 2.6vw, 28px);
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .ab-slogan-text span:last-child {
+    color: var(--accent);
+  }
+
+  /* ---------- 技能 ---------- */
+
+  .soft-grid {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .soft-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 6px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--text-2);
+  }
+
+  .soft-item img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+  }
+
+  .skill-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .skill-group-name {
+    margin: 0 0 8px;
+    color: var(--text-2);
+    font-size: 12.5px;
+  }
+
+  .skill-chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-chips li {
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-2);
+  }
+
+  /* ---------- 性格 ---------- */
+
+  .ab-mbti {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mbti-code {
+    margin: 4px 0 0;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .mbti-line {
+    margin: 10px 0 0;
+    max-width: 60%;
+    color: var(--text-2);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .mbti-art {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 34%;
+    max-width: 120px;
+    pointer-events: none;
+  }
+
+  .mbti-art img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .mbti-link {
+    margin: 14px 0 0;
+    max-width: 60%;
+    color: var(--muted);
+    font-size: 11.5px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ---------- 正文 ---------- */
+
+  .intro-body {
+    font-size: 15.5px;
+  }
+
+  .intro-body :where(h2, h3) {
+    display: none;
+  }
+
+  .intro-body p {
+    margin: 0 0 1em;
+    color: var(--text-2);
+    line-height: 1.9;
+  }
+
+  .intro-note {
+    margin-top: 14px !important;
+    color: var(--muted) !important;
+    font-size: 12px;
+  }
+
+  /* ---------- 环境 ---------- */
+
+  .env-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .env-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 9px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 13.5px;
+  }
+
+  .env-list li:last-child {
+    border-bottom: none;
+  }
+
+  .env-list .k {
+    flex: 0 0 64px;
+    color: var(--accent);
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+    font-family: var(--font-mono);
+  }
+
+  .env-list .v {
+    color: var(--text-2);
+  }
+
+  .card-footnote {
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+  }
+
+  /* ---------- 兴趣 ---------- */
+
+  .interest-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .interest-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .interest-list .no {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
+  .interest-list .name {
+    margin: 0 0 3px;
+    font-size: 14.5px;
+    font-weight: 600;
+  }
+
+  .interest-list .line {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 12.5px;
+    line-height: 1.65;
+  }
+
+  /* ---------- 联系 ---------- */
+
+  .contact-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 9px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 13.5px;
+  }
+
+  .contact-list li:last-child {
+    border-bottom: none;
+  }
+
+  .contact-list .k {
+    flex: 0 0 44px;
+    color: var(--muted);
+    font-size: 11.5px;
+    letter-spacing: 0.1em;
+  }
+
+  .contact-list .v {
+    color: var(--text-2);
+    word-break: break-all;
+  }
+
+  .contact-note {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  /* ---------- 目标 ---------- */
+
+  .goal-line {
+    margin: 0 0 18px;
+    color: var(--text-2);
+    font-size: 14px;
+  }
+
+  .goal-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    margin: 0 0 16px;
+  }
+
+  .goal-stats .stat {
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  .goal-stats b {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 18px;
+    margin-right: 2px;
+  }
+
+  .goal-tags {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .goal-tags li {
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  /* ---------- 响应式 ---------- */
+
+  @media (max-width: 860px) {
+    .about-head {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: 14px;
+    }
+
+    .p-left,
+    .p-right {
+      align-items: center;
+    }
+
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .about-grid > * {
+      grid-column: span 1;
+    }
+
+    .soft-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ab-card {
+      padding: 18px;
+    }
+
+    .mbti-line,
+    .mbti-link {
+      max-width: 60%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-avatar img {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  let aboutProximityAbort: AbortController | undefined;
+
+  document.addEventListener('astro:page-load', () => {
+    aboutProximityAbort?.abort();
+    aboutProximityAbort = new AbortController();
+    const signal = aboutProximityAbort.signal;
+
+    const avatar = document.querySelector<HTMLElement>('.about-avatar');
+    if (!avatar) return;
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    let raf = 0;
+    const RANGE = 40;
+
+    const onMove = (event: PointerEvent) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = avatar.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = Math.max(0, Math.abs(event.clientX - cx) - rect.width / 2);
+        const dy = Math.max(0, Math.abs(event.clientY - cy) - rect.height / 2);
+        avatar.classList.toggle('is-near', Math.hypot(dx, dy) < RANGE);
+      });
+    };
+
+    window.addEventListener('pointermove', onMove, { passive: true, signal });
+  });
+</script>

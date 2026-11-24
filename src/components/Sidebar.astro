@@ -33,6 +33,17 @@ const shortDate = (date: Date) => formatDate(date).slice(5).replace('-', '/');
     <p class="profile-name">{AUTHOR}</p>
     <p class="profile-tagline">{AUTHOR_TAGLINE}</p>
     <p class="profile-bio">{PROFILE_BIO}</p>
+    {
+      tags.length > 0 && (
+        <ul class="profile-tags">
+          {tags.slice(0, 5).map(({ tag }) => (
+            <li>
+              <a href={tagUrl(tag)}>#{tag}</a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
     <a class="profile-more" href={withBase('/about/')}>关于我 →</a>
   </section>
 

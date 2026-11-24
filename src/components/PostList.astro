@@ -3,6 +3,7 @@ import type { Post } from '../lib/posts';
 import { formatDate } from '../lib/posts';
 import { postUrl } from '../lib/url';
 import TagPill from './TagPill.astro';
+import { AUTHOR, AUTHOR_AVATAR } from '../consts';
 
 interface Props {
   posts: Post[];
@@ -18,10 +19,12 @@ const { posts } = Astro.props;
     <ul class="post-grid">
       {posts.map((post) => (
         <li class="post-card">
-          {post.data.cover && (
+          {post.data.cover ? (
             <a class="post-card-cover" href={postUrl(post.id)}>
               <img src={post.data.cover} alt={post.data.title} loading="lazy" />
             </a>
+          ) : (
+            <div class="post-card-cover post-card-cover-placeholder" aria-hidden="true">✿</div>
           )}
           <div class="post-card-body">
             <h2 class="post-card-title">
@@ -29,6 +32,10 @@ const { posts } = Astro.props;
             </h2>
             {post.data.summary && <p class="post-card-summary">{post.data.summary}</p>}
             <div class="post-card-footer">
+              <span class="post-card-author">
+                <img src={AUTHOR_AVATAR} alt="" width="20" height="20" />
+                <span>{AUTHOR}</span>
+              </span>
               <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
               {post.data.tags.length > 0 && (
                 <div class="tag-list">

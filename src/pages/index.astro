@@ -3,20 +3,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostList from '../components/PostList.astro';
 import Hero from '../components/Hero.astro';
 import Sidebar from '../components/Sidebar.astro';
-import { getPublishedPosts } from '../lib/posts';
+import IconRail from '../components/IconRail.astro';
+import { getPublishedPosts, collectTags } from '../lib/posts';
+import { tagUrl, withBase } from '../lib/url';
 
 const posts = await getPublishedPosts();
+const tags = collectTags(posts).slice(0, 8);
 ---
 
 <BaseLayout>
   <Hero />
-  <div class="layout">
+
+  <div class="home-layout">
+    <IconRail />
+
     <div class="layout-main">
-      <h1 class="page-title">
-        文章 <span class="page-count">共 {posts.length} 篇</span>
-      </h1>
+      <nav class="filter-bar" aria-label="文章分类">
+        <a class="filter-pill is-active" href={withBase('/')}>全部</a>
+        {tags.map(({ tag }) => (
+          <a class="filter-pill" href={tagUrl(tag)}>#{tag}</a>
+        ))}
+      </nav>
       <PostList posts={posts} />
     </div>
+
     <Sidebar posts={posts} />
   </div>
 </BaseLayout>

@@ -1,10 +1,30 @@
 ---
-import { SITE_TITLE, AUTHOR_TAGLINE, HERO_TAGLINE } from '../consts';
+import { SITE_DESCRIPTION, HERO_TAGLINE } from '../consts';
+import { withBase } from '../lib/url';
+
+const COVERS = ['cover-1.jpg', 'cover-2.jpg', 'cover-3.jpg', 'cover-4.jpg', 'cover-5.jpg'];
 ---
 
 <section class="hero">
-  <p class="hero-eyebrow">你好，我是</p>
-  <h1 class="hero-title">{SITE_TITLE}</h1>
-  <p class="hero-tagline">{AUTHOR_TAGLINE}</p>
-  <p class="hero-slogan">{HERO_TAGLINE}</p>
+  <div class="hero-bg" aria-hidden="true">
+    {
+      COVERS.map((cover) => (
+        <img class="hero-bg-img" src={withBase(`/covers/${cover}`)} alt="" loading="eager" />
+      ))
+    }
+  </div>
+  <div class="hero-mask" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <span class="hero-quote" aria-hidden="true">“</span>
+    <h1 class="hero-title">{HERO_TAGLINE}</h1>
+    <p class="hero-tagline">{SITE_DESCRIPTION}</p>
+  </div>
+
+  <svg class="hero-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path
+      d="M0,32 C240,56 480,8 720,26 C960,44 1200,10 1440,30 L1440,60 L0,60 Z"
+      fill="var(--bg)"
+    />
+  </svg>
 </section>

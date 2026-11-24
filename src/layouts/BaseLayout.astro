@@ -106,5 +106,115 @@ const year = new Date().getFullYear();
         });
       });
     </script>
+    <!-- 白猫看板娘 Tororo，跟随鼠标 -->
+    <canvas
+      id="waifu-canvas"
+      aria-hidden="true"
+      style="position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;"
+    ></canvas>
+    <div
+      id="waifu-bubble"
+      aria-hidden="true"
+      style="position:fixed;z-index:10000;pointer-events:none;max-width:220px;padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.94);border:1px solid rgba(0,0,0,.08);box-shadow:0 4px 14px rgba(0,0,0,.18);color:#1f1f22;font-size:13px;line-height:1.6;letter-spacing:.02em;opacity:0;transform:translate(-50%,0) translateY(6px);transition:opacity .18s ease,transform .18s ease;"
+    ></div>
+    <script is:inline src="https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/npm/pixi.js@6.5.2/dist/browser/pixi.min.js"></script>
+    <script is:inline src="https://cdn.jsdelivr.net/gh/RaSan147/pixi-live2d-display@1.0.5/dist/cubism2.min.js"></script>
+    <script is:inline>
+      (function () {
+        if (window.__waifuMounted) return;
+        window.__waifuMounted = true;
+        if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) return;
+
+        var MODEL = 'https://unpkg.com/live2d-widget-model-tororo@1.0.5/assets/tororo.model.json';
+        var canvas = document.getElementById('waifu-canvas');
+        var app = new PIXI.Application({
+          view: canvas,
+          autoStart: true,
+          resizeTo: window,
+          backgroundAlpha: 0,
+        });
+
+        PIXI.live2d.Live2DModel.from(MODEL)
+          .then(function (cat) {
+            app.stage.addChild(cat);
+
+            var TARGET_H = 200;
+            function layout() {
+              var w = window.innerWidth, h = window.innerHeight;
+              var oh = (cat.internalModel && cat.internalModel.originalHeight) || 300;
+              cat.anchor.set(0.5, 1);
+              cat.scale.set(TARGET_H / oh);
+              cat.y = h - 10;
+              cat.x = 100;
+            }
+            layout();
+            window.addEventListener('resize', layout);
+
+            // 第一次靠近固定说欢迎句，之后从下面的句子里随机；想换话直接改这里
+            var WELCOME = '很高兴遇见你！';
+            var LINES = [
+              '你又刷新了一遍，也没刷出新东西。',
+              '慢点看，字又不会跑。',
+              '鼠标离我这么远，是怕我看你屏幕吗？',
+              '这页留得住你，留不住你的明天。',
+              '今天的风，是从屏幕外面吹进来的。',
+              '慢慢来，我们都不赶时间。',
+              '进来了就当自己家，猫不咬人。',
+            ];
+
+            var bubble = document.getElementById('waifu-bubble');
+            var hovering = false;
+            var welcomeShown = false;
+
+            function showBubble() {
+              var line;
+              if (!welcomeShown) {
+                welcomeShown = true;
+                line = WELCOME;
+              } else {
+                line = LINES[Math.floor(Math.random() * LINES.length)];
+              }
+              bubble.textContent = line;
+              var bx = Math.max(118, Math.min(window.innerWidth - 118, cat.x));
+              bubble.style.left = bx + 'px';
+              bubble.style.top = cat.y - cat.height - 14 + 'px';
+              bubble.style.opacity = '1';
+              bubble.style.transform = 'translate(-50%,0) translateY(0)';
+            }
+            function hideBubble() {
+              hovering = false;
+              bubble.style.opacity = '0';
+              bubble.style.transform = 'translate(-50%,0) translateY(6px)';
+            }
+
+            function onMove(e) {
+              var dx = Math.max(-1, Math.min(1, (e.clientX - window.innerWidth / 2) / (window.innerWidth / 2)));
+              var dy = Math.max(-1, Math.min(1, (e.clientY - window.innerHeight / 2) / (window.innerHeight / 2)));
+              cat.internalModel.focusController.focus(dx, dy);
+
+              var pad = 16;
+              var left = cat.x - cat.width / 2 - pad;
+              var right = cat.x + cat.width / 2 + pad;
+              var top = cat.y - cat.height - pad;
+              var bottom = cat.y + pad;
+              var inside =
+                e.clientX >= left && e.clientX <= right && e.clientY >= top && e.clientY <= bottom;
+              if (inside) {
+                if (!hovering) {
+                  hovering = true;
+                  showBubble();
+                }
+              } else if (hovering) {
+                hideBubble();
+              }
+            }
+            document.addEventListener('mousemove', onMove);
+          })
+          .catch(function (err) {
+            console.error('waifu load failed', err);
+          });
+      })();
+    </script>
   </body>
 </html>
