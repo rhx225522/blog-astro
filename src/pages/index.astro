@@ -5,14 +5,12 @@ import IconRail from '../components/IconRail.astro';
 import Sidebar from '../components/Sidebar.astro';
 import PostList from '../components/PostList.astro';
 import { getPublishedPosts } from '../lib/posts';
-import { getPublishedWorks } from '../lib/works';
 import { getPublishedSays } from '../lib/says';
 import { render } from 'astro:content';
 import { formatDate } from '../lib/posts';
 import { withBase } from '../lib/url';
 
 const posts = await getPublishedPosts();
-const works = await getPublishedWorks();
 const says = await getPublishedSays();
 
 const sayItems = await Promise.all(
@@ -30,35 +28,6 @@ const sayItems = await Promise.all(
     <IconRail />
 
     <div class="layout-main">
-      <section class="home-section">
-        <div class="home-section-head">
-          <h2 class="home-section-title">精选作品</h2>
-          <a class="home-section-more" href={withBase('/works/')}>全部作品 →</a>
-        </div>
-        {
-          works.length === 0 ? (
-            <p class="empty">还没有作品，稍后补上。</p>
-          ) : (
-            <ul class="work-grid">
-              {works.slice(0, 4).map((work) => (
-                <li class="work-card">
-                  <div class="work-card-head">
-                    {work.data.year && <span class="work-year">{work.data.year}</span>}
-                    {work.data.level && <span class="work-level">{work.data.level}</span>}
-                  </div>
-                  <h3 class="work-card-title">{work.data.title}</h3>
-                  {work.data.subtitle && <p class="work-card-subtitle">{work.data.subtitle}</p>}
-                  {work.data.summary && <p class="work-card-summary">{work.data.summary}</p>}
-                  <div class="work-card-foot">
-                    {work.data.role && <span class="work-role">{work.data.role}</span>}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )
-        }
-      </section>
-
       <section class="home-section">
         <div class="home-section-head">
           <h2 class="home-section-title">最新文章</h2>

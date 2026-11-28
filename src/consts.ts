@@ -26,7 +26,6 @@ export const SUPABASE_ANON_KEY = 'sb_publishable_YdD1AWJ84OmKSviZKE2Zaw_bsA_1jhP
 
 export const NAV = [
   { label: '首页', href: '/' },
-  { label: '作品', href: '/works/' },
   { label: '文章', href: '/posts/' },
   { label: '说说', href: '/says/' },
   { label: '留痕', href: '/traces/' },
